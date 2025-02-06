@@ -1,24 +1,24 @@
-name: Run Main
+name: Run Tests
 
 on: push
 
 jobs:
   run-main:
-    name: Run Main
+    name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
-      
+
       - name: Setup V
         uses: vlang/setup-v@v1.1
-      
-      - name: Update apt-get
+
+      - name: Update packages
         run: sudo apt-get update
 
       - name: Setup ZeroMQ
         run: sudo apt-get install -y libzmq3-dev libczmq-dev
-      
+
       - name: Compile and run main.v
-        run: v run main.v
+        run: v -stats test .

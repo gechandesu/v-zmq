@@ -1,16 +1,12 @@
-import vmq
+module vmq
+
 import time
 
-fn main() {
-	ctx := vmq.new_context()
-	test_timeout(ctx)!
-	test_pubsub(ctx)!
-	test_pushpull(ctx)!
-}
+const ctx = new_context()
 
-fn test_timeout(ctx &vmq.Context) ! {
-	p1 := vmq.new_socket(ctx, vmq.SocketType.pair)!
-	p2 := vmq.new_socket(ctx, vmq.SocketType.pair)!
+fn test_timeout() ! {
+	p1 := new_socket(ctx, SocketType.pair)!
+	p2 := new_socket(ctx, SocketType.pair)!
 
 	p1.bind('inproc://timeouttest')!
 	p1.set_send_timeout(time.millisecond * 100)!
@@ -22,9 +18,9 @@ fn test_timeout(ctx &vmq.Context) ! {
 	println(p2.recv()!.bytestr())
 }
 
-fn test_pubsub(ctx &vmq.Context) ! {
-	p := vmq.new_socket(ctx, vmq.SocketType.@pub)!
-	s := vmq.new_socket(ctx, vmq.SocketType.sub)!
+fn test_pubsub() ! {
+	p := new_socket(ctx, SocketType.@pub)!
+	s := new_socket(ctx, SocketType.sub)!
 
 	p.bind('inproc://pubsubtest')!
 	s.connect('inproc://pubsubtest')!
@@ -52,16 +48,16 @@ fn test_pubsub(ctx &vmq.Context) ! {
 	println(m3.bytestr())
 }
 
-fn test_pushpull(ctx &vmq.Context) ! {
-	push := vmq.new_socket(ctx, vmq.SocketType.push)!
-	pull := vmq.new_socket(ctx, vmq.SocketType.pull)!
+fn test_pushpull() ! {
+	push := new_socket(ctx, SocketType.push)!
+	pull := new_socket(ctx, SocketType.pull)!
 
 	// Generate some test keys
-	pub_key, sec_key := vmq.curve_keypair()!
+	pub_key, sec_key := curve_keypair()!
 	push.setup_curve(pub_key, sec_key)!
 	push.set_curve_server()!
 
-	pull_pk, pull_sk := vmq.curve_keypair()!
+	pull_pk, pull_sk := curve_keypair()!
 	pull.setup_curve(pull_pk, pull_sk)!
 	pull.set_curve_serverkey(pub_key)!
 
@@ -73,7 +69,7 @@ fn test_pushpull(ctx &vmq.Context) ! {
 	t.wait()
 }
 
-fn recv(pull &vmq.Socket) {
+fn recv(pull &Socket) {
 	msg := pull.recv() or { panic(err) }
 	println(msg.bytestr())
 }
