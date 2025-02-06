@@ -5,4 +5,3 @@ main
 *.so
 *.dylib
 *.dll
-/just_trigger_gh_actions
